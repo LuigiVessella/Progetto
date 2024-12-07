@@ -5,20 +5,22 @@ from pyts.image import GramianAngularField
 import matplotlib.pyplot as plt
 from skimage.transform import resize
 
-# Percorso relativo del file Parquet
-file_path = os.path.join(os.getcwd(), "DataAnalytics/NetDiffus", "Mirage-AppxActModifiedRidotto.parquet")
+base_dir = os.path.dirname(__file__)
+input_file_path = os.path.join(base_dir, "Mirage-AppxActRidotto.parquet")
 
 # Directory per salvare le immagini GASF, usando un percorso relativo
-save_dir = os.path.join(os.getcwd(), "DataAnalytics/NetDiffus","datiOriginali_GASF")
-if not os.path.exists(save_dir):
-    os.makedirs(save_dir)
+output_file_path = os.path.join(base_dir, "datiOriginali_GASF/")
+
+
+if not os.path.exists(output_file_path):
+    os.makedirs(output_file_path)
 
 # Leggi il file Parquet
-df = pd.read_parquet(file_path)
+df = pd.read_parquet(input_file_path)
 
 # Verifica che la colonna 'PL' esista
 if 'PL' not in df.columns:
-    raise ValueError(f"Errore: la colonna 'PL' non è presente nel file {file_path}.")
+    raise ValueError(f"Errore: la colonna 'PL' non è presente nel file {input_file_path}.")
 
 # Processa ogni riga nella colonna PL
 k = 1  # Contatore per le immagini generate
@@ -45,8 +47,8 @@ for idx, pl_values in df['PL'].items():
 
     # Salva come PNG
     image_name = f"Mirage_PL_{k}.png"
-    plt.imsave(os.path.join(save_dir, image_name), gasf_img_resized, cmap='viridis')
+    plt.imsave(os.path.join(output_file_path, image_name), gasf_img_resized, cmap='viridis')
 
     k += 1
 
-print(f"Completato! {k - 1} immagini GASF salvate nella directory {save_dir}.")
+print(f"Completato! {k - 1} immagini GASF salvate nella directory {output_file_path}.")
