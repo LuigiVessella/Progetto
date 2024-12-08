@@ -4,7 +4,17 @@ Train a diffusion model on images.
 
 import argparse
 import os
-os.chdir('/share/home/snir5742/torch-env/guided-diffusion-main')
+
+base_dir = os.path.dirname(__file__)
+
+# Costruisci il percorso risalendo di due livelli
+target_dir = os.path.abspath(os.path.join(base_dir, '../../'))
+
+# Cambia la directory di lavoro
+os.chdir(target_dir)
+
+print("Current working directory:", os.getcwd())
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 #import guided-difusion-0.0.0 as guided_diffusion
 #import guided_diffusion

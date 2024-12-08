@@ -11,7 +11,7 @@ base_dir = os.path.dirname(__file__)
 input_file_path = os.path.join(base_dir, "Mirage-AppxActRidotto.parquet")
 
 # Directory per salvare le immagini GASF, usando un percorso relativo
-output_file_path = os.path.join(base_dir, "datiOriginali_GASF/")
+output_file_path = os.path.join(base_dir, "datiOriginali_GASF")
 if not os.path.exists(output_file_path):
     os.makedirs(output_file_path)
 
