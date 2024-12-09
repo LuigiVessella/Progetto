@@ -4,20 +4,23 @@ Train a diffusion model on images.
 
 import argparse
 import os
-
 import torch
+print(torch.__version__)  # Verifica la versione di PyTorch
+print(torch.cuda.is_available())  # Verifica se CUDA è disponibile
 
-base_dir = os.path.dirname(__file__)
+#os.chdir('/share/home/snir5742/torch-env/guided-diffusion-main')
+name_dir = os.path.dirname(__file__)
 
 # Costruisci il percorso risalendo di due livelli
-target_dir = os.path.abspath(os.path.join(base_dir, '../../'))
+base_dir = os.path.abspath(os.path.join(name_dir, '../../../'))
+
+target_dir=os.path.join(base_dir, "guided-diffusion")
 
 # Cambia la directory di lavoro
 os.chdir(target_dir)
 
 print("Current working directory:", os.getcwd())
-
-#os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 #import guided-difusion-0.0.0 as guided_diffusion
 #import guided_diffusion
 #from guided_diffusion import dist_util, logger
@@ -43,7 +46,13 @@ from train_util import TrainLoop
 
 
 def main():
-    print("Using device:", torch.device("mps") if torch.backends.mps.is_available() else "CPU")
+    # Seleziona dispositivo
+    if torch.cuda.is_available():
+        device = torch.device("cuda")  # Usa la GPU NVIDIA
+        print("Using NVIDIA GPU:", torch.cuda.get_device_name(0))
+    else:
+        device = torch.device("cpu")  # Usa la CPU se nessuna GPU è disponibile
+        print("Using CPU")
 
     args = create_argparser().parse_args()
 
@@ -89,14 +98,14 @@ def create_argparser():
     defaults = dict(
         data_dir="",
         schedule_sampler="uniform",
-        lr=5e-5,
+        lr=1e-4,
         weight_decay=0.0,
         lr_anneal_steps=0,
         batch_size=1,
-        microbatch=1,  # -1 disables microbatches
+        microbatch=-1,  # -1 disables microbatches
         ema_rate="0.9999",  # comma-separated list of EMA values
         log_interval=10,
-        save_interval=1000,
+        save_interval=10000,
         resume_checkpoint="",
         use_fp16=False,
         fp16_scale_growth=1e-3,

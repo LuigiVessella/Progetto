@@ -48,18 +48,18 @@ def model_and_diffusion_defaults():
     Defaults for image training.
     """
     res = dict(
-        image_size=10,  # Modificato per immagini 10x10
-        num_channels=32,  # Ridotto per semplificare
-        num_res_blocks=1,  # Solo un blocco residuo
-        num_heads=1,
+        image_size=64,
+        num_channels=128,
+        num_res_blocks=2,
+        num_heads=4,
         num_heads_upsample=-1,
         num_head_channels=-1,
-        attention_resolutions="2,1",  # Ridotto per immagini 10x10
+        attention_resolutions="16,8",
         channel_mult="",
-        dropout=0.1,  # Aggiunto dropout per evitare overfitting
+        dropout=0.0,
         class_cond=False,
         use_checkpoint=False,
-        use_scale_shift_norm=False,
+        use_scale_shift_norm=True,
         resblock_updown=False,
         use_fp16=False,
         use_new_attention_order=False,
@@ -157,8 +157,8 @@ def create_model(
             channel_mult = (1, 1, 2, 3, 4)
         elif image_size == 64:
             channel_mult = (1, 2, 3, 4)
-        elif image_size == 10:  # Nuovo caso
-            channel_mult = (1,)  # Un solo livello per semplificare
+        elif image_size == 10:      #aggiunta dimensione custom 10x10
+            channel_mult = (1, 2)  
         else:
             raise ValueError(f"unsupported image size: {image_size}")
     else:
@@ -248,6 +248,8 @@ def create_classifier(
         channel_mult = (1, 1, 2, 3, 4)
     elif image_size == 64:
         channel_mult = (1, 2, 3, 4)
+    elif image_size == 10:      #aggiunta dimensione custom 10x10
+        channel_mult = (1, 2)  
     else:
         raise ValueError(f"unsupported image size: {image_size}")
 
