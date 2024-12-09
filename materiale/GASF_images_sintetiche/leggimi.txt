@@ -1,0 +1,2 @@
+per il momento non carico le immagini ne i file .pt
+per ora controllare 128/iterate/df/synth_models/GASF_SYNT
