@@ -1,46 +1,69 @@
 import pandas as pd
 import numpy as np
 import os
-from pyts.image import GramianAngularField
 import matplotlib.pyplot as plt
 from skimage.transform import resize
+from skimage.io import imread
 
-data_dir = "Youtube/vid"  # directory where 1D traces are stored (Format : Youtube/vid*)
-save_dir = "Youtube_img/vid"  # directory to store GASF converted data as PNG
-n = 20  # number of videos
+# Funzione per calcolare il minimo e massimo globali su PL e aggiunta di DIR 
+def find_global_min_max_with_dir(df, pl_column, dir_column):
+    all_pl_adjusted = []
+    for _, row in df.iterrows():
+        pl = row[pl_column]
+        dir = row[dir_column]
+        if dir==0:
+            pl_inverted = []
+            for p in pl:
+                pl_inverted.append(-p)
+            pl = pl_inverted
+        all_pl_adjusted.extend(pl)
+    global_min = min(all_pl_adjusted)
+    global_max = max(all_pl_adjusted)
+    return global_min, global_max
 
-for i in range(n):
-    vid = data_dir + str(i + 1)
-    path_to_save = os.path.abspath(save_dir + str(i + 1))
-    if not os.path.exists(path_to_save):
-        os.makedirs(path_to_save)
-    k = 1
-    for file in os.scandir(vid):  # load data and convert to GASF
-        df = pd.read_csv(file, usecols=[' addr2_bytes'])  # the column to read the data
-        df = df.replace(np.nan, 0)
-        data = df.to_numpy(dtype='float')
-        pts = []
-        # GASF formation
-        for l in data:
-            for j in l:
-                pts.append(j)
-        num_of_samples_per_bin = 4  # to bin the video data
-        points = []
-        for j in range(int(len(pts) / num_of_samples_per_bin)):
-            points.append(np.sum(pts[j * num_of_samples_per_bin:(j + 1) * num_of_samples_per_bin]))
-        X = np.array([points])
-        # Compute Gramian angular fields
-        gasf = GramianAngularField(sample_range=(0, 1), method='summation')
-        X_gasf = gasf.fit_transform(X)
-        # Gamma correction
-        gasf_img = X_gasf[0] * 0.5 + 0.5
-        gamma = 0.25
-        gasf_img = np.power(gasf_img, gamma)
+# Funzione per normalizzare una serie usando min e max globali tra 0 e 1
+def normalize_with_global(series, global_min, global_max):
+    return (series - global_min) / (global_max - global_min)
 
-        # Resize the image to 128x128
-        gasf_img_resized = resize(gasf_img, (128, 128), anti_aliasing=True)
+# Funzione per calcolare la GASF 
+def create_gasf(series):
+    n = len(series)
+    gasf_matrix = np.zeros((n, n))  # Matrice GASF inizializzata a zero
+    for i in range(n):
+        for j in range(n):
+            # Sommare i due valori e calcolare il coseno dell'angolo
+            cos_2phi = np.cos(np.arccos(series[i]) + np.arccos(series[j]))  
+            gasf_matrix[i, j] = cos_2phi
+    return gasf_matrix
 
-        # Save as PNG
-        plt.imsave(os.path.join(path_to_save, f"vid{i + 1}_{k}.png"), gasf_img_resized, cmap='viridis')
+# Path del file parquet 
+file_path = os.path.join("materiale", "Mirage-AppxActRidotto1600Aggiunti0.parquet")
 
-        k += 1
+df = pd.read_parquet(file_path)
+
+global_min, global_max = find_global_min_max_with_dir(df, pl_column="PL", dir_column="DIR")
+
+# Creare una cartella per salvare le immagini GASF
+output_folder = os.path.join("materiale","immaginiGASFdatasetOriginaleScriptMagri")
+os.makedirs(output_folder, exist_ok=True)
+
+# Iterare su tutte le righe del dataset
+for idx, row in df.iterrows():
+    pl = np.array(row["PL"])
+    normalized_series = normalize_with_global(pl, global_min, global_max)
+    gasf = create_gasf(normalized_series)
+
+    label = row["LABEL"]
+    label_folder = os.path.join(output_folder, str(label))
+    os.makedirs(label_folder, exist_ok=True)
+
+    output_path = os.path.join(label_folder, f"GASF_row_{idx}.png")
+    plt.imsave(output_path, gasf, cmap='viridis')
+
+print(f"Immagini GASF create e salve in cartella '{output_folder}'.")
+
+
+
+# export RDMAV_FORK_SAFE=1
+#python3 scripts/image_train.py --data_dir <Cartella immagini GASF originali> --image_size 10 --num_channels 128 --num_res_blocks 3 --diffusion_steps 1000 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False --lr 1e-4 --batch_size 16
+#python3 scripts/image_sample.py --model_path <cartella con modello creato> --image_size 10 --num_channels 128 --num_res_blocks 3 --diffusion_steps 1000 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False
