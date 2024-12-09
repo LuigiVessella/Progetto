@@ -1,5 +1,5 @@
 # Ignora tutti i file PNG
-
+#*.png
 
 # Ignora tutti i file con estensione .pt
 *.pt
