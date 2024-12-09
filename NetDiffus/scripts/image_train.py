@@ -5,6 +5,8 @@ Train a diffusion model on images.
 import argparse
 import os
 
+import torch
+
 base_dir = os.path.dirname(__file__)
 
 # Costruisci il percorso risalendo di due livelli
@@ -15,7 +17,7 @@ os.chdir(target_dir)
 
 print("Current working directory:", os.getcwd())
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+#os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 #import guided-difusion-0.0.0 as guided_diffusion
 #import guided_diffusion
 #from guided_diffusion import dist_util, logger
@@ -41,6 +43,8 @@ from train_util import TrainLoop
 
 
 def main():
+    print("Using device:", torch.device("mps") if torch.backends.mps.is_available() else "CPU")
+
     args = create_argparser().parse_args()
 
     dist_util.setup_dist()
@@ -85,14 +89,14 @@ def create_argparser():
     defaults = dict(
         data_dir="",
         schedule_sampler="uniform",
-        lr=1e-4,
+        lr=5e-5,
         weight_decay=0.0,
         lr_anneal_steps=0,
         batch_size=1,
-        microbatch=-1,  # -1 disables microbatches
+        microbatch=1,  # -1 disables microbatches
         ema_rate="0.9999",  # comma-separated list of EMA values
         log_interval=10,
-        save_interval=20000,
+        save_interval=100,
         resume_checkpoint="",
         use_fp16=False,
         fp16_scale_growth=1e-3,
