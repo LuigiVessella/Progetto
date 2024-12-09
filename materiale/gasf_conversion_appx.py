@@ -72,8 +72,8 @@ for idx, row in df.iterrows():
     gamma = 0.25
     gasf_img = np.power(gasf_img, gamma)
 
-    # Ridimensiona l'immagine a 128x128
-    gasf_img_resized = resize(gasf_img, (128, 128), anti_aliasing=True)
+    # Ridimensiona l'immagine a 128x128, ora 10x10
+    gasf_img_resized = resize(gasf_img, (10, 10), anti_aliasing=True)
 
     # Crea la directory per l'etichetta se non esiste
     label_dir = os.path.join(output_file_path, str(label))

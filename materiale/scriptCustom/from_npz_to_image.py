@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 base_dir = os.path.dirname(__file__)
-input_file_path = os.path.join(base_dir, "../../128/iterate/df/synth_models/samples_1x64x64x3.npz")
+input_file_path = os.path.join(base_dir, "../../128/iterate/df/synth_models/GASF_SYNTH/samples_1x10x10x3.npz")
 
 # Simula il caricamento dell'array da un file .npz
 npz_file = np.load(input_file_path)
