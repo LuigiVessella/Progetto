@@ -1,8 +1,10 @@
 # How to 
 
-To run gasf_conversion go in root directory Progetto/ and type ''' python NetDiffus/gasf_conversion.py materiale/Mirage-AppxActRidotto1600Aggiunti0.parquet materiale/datiOriginali_GASF '''
+To run gasf_conversion go in root directory Progetto/ and type 
 
-
+```bash
+python NetDiffus/gasf_conversion.py materiale/Mirage-AppxActRidotto1600Aggiunti0.parquet materiale/datiOriginali_GASF
+```
 
 # NetDiffus
 This is repository of the project Mirage Appx, presented at Data analytics course at University Federico II.
