@@ -79,7 +79,7 @@ def main():
         label_arr = label_arr[: args.num_samples]
     if dist.get_rank() == 0:
         shape_str = "x".join([str(x) for x in arr.shape])
-        out_path = os.path.join(logger.get_dir(),"GASF_SYNTH/" f"samples_{shape_str}.npz")
+        out_path = os.path.join(logger.get_dir(), f"samples_{shape_str}.npz")
         logger.log(f"saving to {out_path}")
         if args.class_cond:
             np.savez(out_path, arr, label_arr)
@@ -93,8 +93,8 @@ def main():
 def create_argparser():
     defaults = dict(
         clip_denoised=True,
-        num_samples=1,
-        batch_size=1,
+        num_samples=20,
+        batch_size=16,
         use_ddim=False,
         model_path="",
     )

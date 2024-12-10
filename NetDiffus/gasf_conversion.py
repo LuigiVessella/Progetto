@@ -1,69 +1,100 @@
 import pandas as pd
 import numpy as np
 import os
+from pyts.image import GramianAngularField
 import matplotlib.pyplot as plt
-from skimage.transform import resize
-from skimage.io import imread
-
-# Funzione per calcolare il minimo e massimo globali su PL e aggiunta di DIR 
-def find_global_min_max_with_dir(df, pl_column, dir_column):
-    all_pl_adjusted = []
-    for _, row in df.iterrows():
-        pl = row[pl_column]
-        dir = row[dir_column]
-        if dir==0:
-            pl_inverted = []
-            for p in pl:
-                pl_inverted.append(-p)
-            pl = pl_inverted
-        all_pl_adjusted.extend(pl)
-    global_min = min(all_pl_adjusted)
-    global_max = max(all_pl_adjusted)
-    return global_min, global_max
-
-# Funzione per normalizzare una serie usando min e max globali tra 0 e 1
-def normalize_with_global(series, global_min, global_max):
-    return (series - global_min) / (global_max - global_min)
-
-# Funzione per calcolare la GASF 
-def create_gasf(series):
-    n = len(series)
-    gasf_matrix = np.zeros((n, n))  # Matrice GASF inizializzata a zero
-    for i in range(n):
-        for j in range(n):
-            # Sommare i due valori e calcolare il coseno dell'angolo
-            cos_2phi = np.cos(np.arccos(series[i]) + np.arccos(series[j]))  
-            gasf_matrix[i, j] = cos_2phi
-    return gasf_matrix
-
-# Path del file parquet 
-file_path = os.path.join("materiale", "Mirage-AppxActRidotto1600Aggiunti0.parquet")
-
-df = pd.read_parquet(file_path)
-
-global_min, global_max = find_global_min_max_with_dir(df, pl_column="PL", dir_column="DIR")
-
-# Creare una cartella per salvare le immagini GASF
-output_folder = os.path.join("materiale","immaginiGASFdatasetOriginaleScriptMagri")
-os.makedirs(output_folder, exist_ok=True)
-
-# Iterare su tutte le righe del dataset
-for idx, row in df.iterrows():
-    pl = np.array(row["PL"])
-    normalized_series = normalize_with_global(pl, global_min, global_max)
-    gasf = create_gasf(normalized_series)
-
-    label = row["LABEL"]
-    label_folder = os.path.join(output_folder, str(label))
-    os.makedirs(label_folder, exist_ok=True)
-
-    output_path = os.path.join(label_folder, f"GASF_row_{idx}.png")
-    plt.imsave(output_path, gasf, cmap='viridis')
-
-print(f"Immagini GASF create e salve in cartella '{output_folder}'.")
+from matplotlib.colors import Normalize
+import numpy as np
+import imageio
+import sys
 
 
+basedir = 'data'
 
-# export RDMAV_FORK_SAFE=1
-#python3 scripts/image_train.py --data_dir <Cartella immagini GASF originali> --image_size 10 --num_channels 128 --num_res_blocks 3 --diffusion_steps 1000 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False --lr 1e-4 --batch_size 16
-#python3 scripts/image_sample.py --model_path <cartella con modello creato> --image_size 10 --num_channels 128 --num_res_blocks 3 --diffusion_steps 1000 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False
+if len(sys.argv) == 1:
+    print(f'Help: {sys.argv[0]} <dataset_file_path> <output_dir_path>')
+
+
+data_file = sys.argv[1]
+save_dir = sys.argv[2] if len(sys.argv) > 2 else ('/' if data_file.startswith('/') else '') + '/'.join(data_file.split('.')[:-1])
+# Path al file e alle directory
+#data_file = "Mirage-VIDEO.parquet"  # Sostituisci con il percorso corretto
+#save_dir = "Output_images_10_minmax"  # Directory principale per salvare le immagini
+if not os.path.exists(save_dir):
+    os.makedirs(save_dir)
+
+# Parametri
+num_packets = 10  # Numero massimo di pacchetti per campione
+output_size = 10  # Dimensione dell'immagine finale
+
+# Caricamento del dataset
+df = pd.read_parquet(data_file)
+
+all_pl_adjusted = []
+for _, row in df.iterrows():
+    pl = row['PL']  # Lista delle dimensioni dei pacchetti
+    dir_ = row['DIR']  # Lista delle direzioni dei pacchetti (1 o 0)
+
+    # Creazione dei valori positivi/negativi per PL
+    pl_adjusted = [p if d == 1 else -p for p, d in zip(pl, dir_)]
+    all_pl_adjusted.extend(pl_adjusted)
+
+# Calcolo del minimo e massimo globali
+min_global = min(all_pl_adjusted)
+max_global = max(all_pl_adjusted)
+points = []
+
+print(f"Global Min: {min_global}, Global Max: {max_global}")
+
+# Iterazione sui campioni
+for _, row in df.iterrows():
+    pl = row['PL']  # Lista delle dimensioni dei pacchetti
+    dir_ = row['DIR']  # Lista delle direzioni dei pacchetti (1 o 0)
+
+    # Creazione dei valori positivi/negativi per PL
+    pl_adjusted = [p if d == 1 else -p for p, d in zip(pl, dir_)]
+
+    if not pl_adjusted:  # Verifica se la lista è vuota
+        points.append(None)  # Aggiungi un elemento None per mantenere l'indice
+        continue
+
+    # Riempimento o troncamento a 10 valori
+    pl_adjusted = (pl_adjusted + [np.int64(0)] * num_packets)[:num_packets]
+
+    # Normalizzazione Min-Max globale tra -1 e 1
+    if max_global - min_global != 0:  # Evita divisioni per zero
+        pl_normalized = [(p - min_global) / (max_global - min_global) for p in pl_adjusted]
+    else:
+        pl_normalized = [0] * num_packets
+
+    points.append(pl_normalized)
+
+X = np.array([point for point in points if point is not None])  # Rimuovi gli None
+
+# Conversione in immagine GASF
+gasf = GramianAngularField(sample_range=None, method='summation')
+X_gasf = gasf.transform(X)
+
+# Iterazione per salvare le immagini, mantenendo l'indice originale
+valid_idx = 0  # Contatore per righe valide
+for idx, (row, point) in enumerate(zip(df.iterrows(), points)):
+    if point is None:  # Salta se la riga è vuota (None)
+        continue
+
+    gasf_img = X_gasf[valid_idx] * 0.5 + 0.5
+
+    # Ottieni l'etichetta e crea la directory corrispondente
+    label = row[1]['LABEL']  # Nome della classe del campione
+    label_dir = os.path.join(save_dir, str(label))  # Directory specifica per l'etichetta
+    if not os.path.exists(label_dir):
+        os.makedirs(label_dir)  # Crea la directory se non esiste
+
+    # Salvataggio dell'immagine
+    filename = f"sample_{idx+2}"
+    filepath = os.path.join(label_dir, filename)
+    # plt.imsave(filepath + '.png', gasf_img, cmap='viridis')
+    
+    np.savez(x=gasf_img, file=filepath + '.npz')
+    imageio.imwrite(filepath + '.png', np.uint8(gasf_img * 255))
+
+    valid_idx += 1  # Aumenta il contatore per le righe valide

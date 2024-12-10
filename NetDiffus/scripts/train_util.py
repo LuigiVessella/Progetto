@@ -68,6 +68,7 @@ class TrainLoop:
         self.global_batch = self.batch_size * dist.get_world_size()
 
         self.sync_cuda = th.cuda.is_available()
+        print(f'{self.sync_cuda=}')
 
         self._load_and_sync_parameters()
         self.mp_trainer = MixedPrecisionTrainer(

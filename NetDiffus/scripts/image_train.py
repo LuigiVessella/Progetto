@@ -2,25 +2,15 @@
 Train a diffusion model on images.
 """
 
-import argparse
-import os
 import torch
-print(torch.__version__)  # Verifica la versione di PyTorch
-print(torch.cuda.is_available())  # Verifica se CUDA è disponibile
+print(f'{torch.cuda.is_available()=}')
 
-#os.chdir('/share/home/snir5742/torch-env/guided-diffusion-main')
-name_dir = os.path.dirname(__file__)
-
-# Costruisci il percorso risalendo di due livelli
-base_dir = os.path.abspath(os.path.join(name_dir, '../../../'))
-
-target_dir=os.path.join(base_dir, "guided-diffusion")
-
-# Cambia la directory di lavoro
-os.chdir(target_dir)
-
-print("Current working directory:", os.getcwd())
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+import argparse
+import sys
+import os
+script_dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(script_dir)
+# os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 #import guided-difusion-0.0.0 as guided_diffusion
 #import guided_diffusion
 #from guided_diffusion import dist_util, logger
@@ -33,7 +23,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 #    add_dict_to_argparser,
 #)
 #from guided_diffusion.train_util import TrainLoop
-import dist_util, logger
+import dist_util
+import logger
 from image_datasets import load_data
 from resample import create_named_schedule_sampler
 from script_util import (
@@ -46,14 +37,6 @@ from train_util import TrainLoop
 
 
 def main():
-    # Seleziona dispositivo
-    if torch.cuda.is_available():
-        device = torch.device("cuda")  # Usa la GPU NVIDIA
-        print("Using NVIDIA GPU:", torch.cuda.get_device_name(0))
-    else:
-        device = torch.device("cpu")  # Usa la CPU se nessuna GPU è disponibile
-        print("Using CPU")
-
     args = create_argparser().parse_args()
 
     dist_util.setup_dist()
@@ -96,19 +79,19 @@ def main():
 
 def create_argparser():
     defaults = dict(
-        data_dir="",
-        schedule_sampler="uniform",
-        lr=1e-4,
-        weight_decay=0.0,
-        lr_anneal_steps=0,
-        batch_size=1,
-        microbatch=-1,  # -1 disables microbatches
-        ema_rate="0.9999",  # comma-separated list of EMA values
-        log_interval=10,
-        save_interval=10000,
-        resume_checkpoint="",
-        use_fp16=False,
-        fp16_scale_growth=1e-3,
+        data_dir="Output_images_10_minmax",  # Directory del dataset
+        schedule_sampler="uniform",  # Campionamento uniforme
+        lr=4e-4,
+        weight_decay=0.0,  # Nessuna penalizzazione dei pesi
+        lr_anneal_steps=0,  # Nessun annealing
+        batch_size=1,  # Batch più grande per GPU medie
+        microbatch=-1,  # Disabilitato
+        ema_rate="0.999",  # EMA leggermente più reattivo
+        log_interval=10,  # Frequenza dei log invariata
+        save_interval=5000,  # Salva il modello ogni 1000
+        resume_checkpoint="",  # Default, nessun checkpoint
+        use_fp16=False,  # Disabilitato per compatibilità GPU
+        fp16_scale_growth=1e-3,  # Non usato con FP16 disabilitato
     )
     defaults.update(model_and_diffusion_defaults())
     parser = argparse.ArgumentParser()

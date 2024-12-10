@@ -1,6 +1,0 @@
-Logging to 128/iterate/df/synth_models
-creating model and diffusion...
-sampling...
-created 1 samples
-saving to 128/iterate/df/synth_models/GASF_SYNTH/samples_1x10x10x3.npz
-sampling complete

@@ -257,7 +257,7 @@ def main():
         dataset_train = CSVDataset(train_paths, train_gts, num_of_vid)
         train_dl = DataLoader(dataset_train, batch_size=32, shuffle=True)
 
-        model = DNN_model(num_channels=3, classes=num_of_vid)
+        model = DNN_model(num_channels=1, classes=num_of_vid)
         model.to(device)
 
         ## +++++++++ train the model +++++++++++
