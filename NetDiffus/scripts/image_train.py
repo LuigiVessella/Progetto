@@ -8,8 +8,17 @@ print(f'{torch.cuda.is_available()=}')
 import argparse
 import sys
 import os
-script_dir = os.path.dirname(os.path.abspath(__file__))
-os.chdir(script_dir)
+
+base_dir = os.path.dirname(__file__)
+
+# Costruisci il percorso risalendo di due livelli
+target_dir = os.path.abspath(os.path.join(base_dir, '../../'))
+
+# Cambia la directory di lavoro
+os.chdir(target_dir)
+
+print("Current working directory:", os.getcwd())
+
 # os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 #import guided-difusion-0.0.0 as guided_diffusion
 #import guided_diffusion

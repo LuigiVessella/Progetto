@@ -6,6 +6,21 @@ To run gasf_conversion go in root directory Progetto/ and type
 python NetDiffus/gasf_conversion.py materiale/Mirage-AppxActRidotto1600Aggiunti0.parquet materiale/datiOriginali_GASF
 ```
 
+
+To run image_train.py put make sure you're again in Progetto/ and type the follow comand:
+
+```bash
+python NetDiffus/scripts/image_train.py --data_dir materiale/datiOriginali_GASF --image_size 128 --num_channels 128 --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False --lr 5e-5 --batch_size 1
+```
+
+To run image_sample, go again in Progetto/ and
+
+```bash
+  python NetDiffus/scripts/image_sample.py --model_path 128/iterate/df/synth_models/model003000.pt --image_size 10 --num_channels 128 --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False
+```
+
+
+
 # NetDiffus
 This is repository of the project Mirage Appx, presented at Data analytics course at University Federico II.
 
