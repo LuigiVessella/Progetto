@@ -28,6 +28,9 @@ def find_global_min_max_with_dir(df, pl_column, dir_column):
 # Funzione per normalizzare una serie usando min e max globali tra 0 e 1
 def normalize_with_global(series, global_min, global_max):
     print(f"Serie originale da normalizzare:{series}")
+    print(f"globalmin:{global_min}")
+    print(f"globalmin:{global_max}")
+
     x = (series - global_min) / (global_max - global_min)
     return x
 
