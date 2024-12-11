@@ -43,7 +43,8 @@ from train_util import TrainLoop
 
 
 def main():
-    print("Using device:", torch.device("mps") if torch.backends.mps.is_available() else "CPU")
+    print("Using device:", torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+
 
     args = create_argparser().parse_args()
 
