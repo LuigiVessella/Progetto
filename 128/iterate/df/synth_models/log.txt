@@ -1,18 +1,10 @@
 Logging to 128/iterate/df/synth_models
 creating model and diffusion...
-creating data loader...
-training...
--------------------------
-| grad_norm  | 10.8     |
-| loss       | 1.07     |
-| loss_q2    | 1.07     |
-| mse        | 1        |
-| mse_q2     | 1        |
-| param_norm | 256      |
-| samples    | 1        |
-| step       | 0        |
-| vb         | 0.0635   |
-| vb_q2      | 0.0635   |
--------------------------
-saving model 0...
-saving model 0.999...
+sampling...
+created 1 samples
+created 2 samples
+created 3 samples
+created 4 samples
+created 5 samples
+saving to 128/iterate/df/synth_models/GASF_SYNTH/samples_5x10x10x3.npz
+sampling complete
