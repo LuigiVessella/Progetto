@@ -27,7 +27,7 @@ To run image_sample, go again in Progetto/ and
 > :warning: This set up is only for development/prototyping <u>DO NOT</u> use it in production :warning:
 
 
-To run gasf_conversion go in root directory Progetto/materiale and run [text](materiale/gasf_conversion_appx.py)
+To run gasf_conversion go in root directory Progetto/materiale and run [gasf_conversion_appx.py](materiale/gasf_conversion_appx.py)
 
 ```bash
 
