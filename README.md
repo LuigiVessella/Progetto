@@ -1,4 +1,4 @@
-# How to 
+# How to start NetDiffus
 
 To run gasf_conversion go in root directory Progetto/ and type 
 
@@ -19,7 +19,29 @@ To run image_sample, go again in Progetto/ and
   python NetDiffus/scripts/image_sample.py --model_path 128/iterate/df/synth_models/model003000.pt --image_size 10 --num_channels 128 --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False
 ```
 
+# How to start NetDiffus_Old
 
+To run gasf_conversion go in root directory Progetto/materiale and run [text](materiale/gasf_conversion_appx.py)
+
+```bash
+
+python materiale/gasf_conversion_appx.py 
+
+```
+
+
+To run _image_train.py_ put make sure you're again in Progetto/ and type the follow comand:
+
+```bash
+python NetDiffus_Old/scripts/image_train.py --data_dir materiale/datiOriginali_GASF --image_size 128 --num_channels 128 --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False --lr 5e-5 --batch_size 1
+```
+
+To run _image_sample_, go again in Progetto/ and
+
+```bash
+  python NetDiffus_Old/scripts/image_sample.py --model_path 128/iterate/df/synth_models/model003000.pt --image_size 10 --num_channels 128 --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False
+```
+> :warning: This set up is only for development/prototyping <u>DO NOT</u> use it in production :warning:
 
 # NetDiffus
 This is repository of the project Mirage Appx, presented at Data analytics course at University Federico II.
