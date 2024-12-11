@@ -1,5 +1,8 @@
 # How to start NetDiffus
 
+> :warning: This set up is only for development/prototyping <u>DO NOT</u> use it in production :warning:
+
+
 To run gasf_conversion go in root directory Progetto/ and type 
 
 ```bash
@@ -21,6 +24,9 @@ To run image_sample, go again in Progetto/ and
 
 # How to start NetDiffus_Old
 
+> :warning: This set up is only for development/prototyping <u>DO NOT</u> use it in production :warning:
+
+
 To run gasf_conversion go in root directory Progetto/materiale and run [text](materiale/gasf_conversion_appx.py)
 
 ```bash
@@ -41,7 +47,7 @@ To run _image_sample_, go again in Progetto/ and
 ```bash
   python NetDiffus_Old/scripts/image_sample.py --model_path 128/iterate/df/synth_models/model003000.pt --image_size 10 --num_channels 128 --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False
 ```
-> :warning: This set up is only for development/prototyping <u>DO NOT</u> use it in production :warning:
+> :warning: Adjust training and generation parameters depends on your hardware :warning:
 
 # NetDiffus
 This is repository of the project Mirage Appx, presented at Data analytics course at University Federico II.
