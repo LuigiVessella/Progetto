@@ -61,7 +61,6 @@ def inverse_gasf_conversion(diagonal):
     # Nuova formula per de-GASFizzare (radice quadrata dell'elemento)
     return np.sqrt((diagonal + 1) / 2)
 
-
 # Funzione per svuotare la directory di destinazione
 def clear_directory(directory):
     for filename in os.listdir(directory):
@@ -71,6 +70,7 @@ def clear_directory(directory):
         elif os.path.isdir(file_path):
             clear_directory(file_path)
             os.rmdir(file_path)
+
 
 # Path relativo per il file di input e la directory di output
 base_dir = os.path.dirname(__file__)
@@ -89,23 +89,22 @@ os.makedirs(output_file_path, exist_ok=True)
 # Svuotare la directory prima di salvare nuove immagini
 clear_directory(output_file_path)
 
+
 # Elaborare tutte le righe del dataset
 for idx, row in df.iterrows():
     pl = np.array(row["PL"])
     normalized_series = normalize_with_global(pl, global_min, global_max)
     gasf = create_gasf(normalized_series)
 
-    # Normalizzare la matrice GASF per essere salvata come immagine in scala di grigi
+    # Normalizzare la matrice GASF per essere salvata come immagine in scala di grigi (1 canale)
     gasf_scaled = ((gasf - gasf.min()) / (gasf.max() - gasf.min()) * 255).astype(np.uint8)
-    gasf_rgb = np.stack((gasf_scaled, gasf_scaled, gasf_scaled), axis=-1)  
-
 
     # Creare una cartella per l'etichetta (LABEL)
     label = row["LABEL"]
     label_folder = os.path.join(output_file_path, str(label))
     os.makedirs(label_folder, exist_ok=True)
 
-    # Salvare l'immagine PNG
+    # Salvare l'immagine come immagine in scala di grigi (1 canale)
     output_png_path = os.path.join(label_folder, f"GASF_row_{idx}.png")
-    imageio.imwrite(output_png_path, gasf_rgb)
+    imageio.imwrite(output_png_path, gasf_scaled)  # Salvataggio come immagine in scala di grigi
     print(f"Immagine GASF salvata per la riga {idx} in '{output_png_path}'.")
