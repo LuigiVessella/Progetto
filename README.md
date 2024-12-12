@@ -1,3 +1,15 @@
+# Requirements
+
+- Python 3.9
+- guided-diffusion (optional, but included, run pip install . in guided diffusion folder)
+- torch
+- pandas
+- torchvision
+- tqdm
+- blobfile>=1.0.5
+
+
+
 # How to start NetDiffus
 
 > :warning: This set up is only for development/prototyping <u>DO NOT</u> use it in production :warning:
