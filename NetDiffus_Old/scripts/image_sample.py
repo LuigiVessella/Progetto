@@ -16,7 +16,7 @@ from script_util import (
 )
 
 # Recupera il percorso delle sottocartelle del dataset
-dataset_dir = Path("")  # Cambia con il percorso del tuo dataset
+dataset_dir = Path("/home/franc_ubuntu/Università/Progetto/materiale/dataset/interoDatasetGASF_RGB")  # Cambia con il percorso del tuo dataset
 class_folders = sorted(os.listdir(dataset_dir))  
 NUM_CLASSES = len(class_folders)  
 
@@ -125,8 +125,8 @@ def main():
 def create_argparser():
     defaults = dict(
         clip_denoised=True,
-        num_samples=140,
-        batch_size=10,
+        num_samples=1400,
+        batch_size=100,
         use_ddim=False,
         model_path="",
     )

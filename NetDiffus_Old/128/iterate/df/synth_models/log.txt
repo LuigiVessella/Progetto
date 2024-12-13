@@ -1,0 +1,19 @@
+Logging to 128/iterate/df/synth_models
+creating model and diffusion...
+sampling...
+created 100 samples for class ClashRoyale
+created 200 samples for class Crunchyroll
+created 300 samples for class Discord
+created 400 samples for class JitsiMeet
+created 500 samples for class KakaoTalk
+created 600 samples for class Line
+created 700 samples for class Meets
+created 800 samples for class Omlet
+created 900 samples for class Signal
+created 1000 samples for class Slack
+created 1100 samples for class Telegram
+created 1200 samples for class Trueconf
+created 1300 samples for class Twitch
+created 1400 samples for class Whatsapp
+saving to 128/iterate/df/synth_models/samples_1400x10x10x3.npz
+sampling complete

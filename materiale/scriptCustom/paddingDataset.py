@@ -7,8 +7,8 @@ import pandas as pd;
 
 
 base_dir = os.path.dirname(__file__)
-input_file_path = os.path.join(base_dir, "../Mirage-AppxActRidotto.parquet")
-output_file_path = os.path.join(base_dir, "../Mirage-AppxActModificato.parquet")
+input_file_path = os.path.join(base_dir, "../Mirage-AppxAct.parquet")
+output_file_path = os.path.join(base_dir, "../Mirage-AppxActPadding.parquet")
 
 
 df = pd.read_parquet(input_file_path)

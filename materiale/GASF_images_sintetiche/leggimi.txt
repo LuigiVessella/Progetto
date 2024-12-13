@@ -1,2 +1,0 @@
-per il momento non carico le immagini di questa cartella (in attesa di modelli funzionanti) ne i file .pt
-per ora controllare 128/iterate/df/synth_models/GASF_SYNTH in cui avvengono sperimentazioni

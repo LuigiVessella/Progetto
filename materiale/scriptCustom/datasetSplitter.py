@@ -4,7 +4,7 @@ import os
 
 # Carica il dataset
 base_path = os.path.dirname(__file__)
-file_path = os.path.join(base_path,'../dataset/totalDataset.parquet')
+file_path = os.path.join(base_path,'../dataset/Mirage-AppxActPadding.parquet')
 print(file_path)
 data = pd.read_parquet(file_path)
 

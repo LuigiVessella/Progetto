@@ -26,10 +26,10 @@ def main(original_dir, synthetic_dir, output_dir):
 
     # Mappa delle classi: associa nomi originali a numeri sintetici
     class_map = {
-        "ClashRoyale": "0", "Crunchyroll": "1", "Discord": "2", "JitsiMeet": "3",
-        "KakaoTalk": "4", "Line": "5", "Meets": "6", "Omlet": "7",
-        "Signal": "8", "Slack": "9", "Telegram": "10", "Trueconf": "11",
-        "Twitch": "12", "Whatsapp": "13"
+        "ClashRoyale": "ClashRoyale", "Crunchyroll": "Crunchyroll", "Discord": "Discord", "JitsiMeet": "JitsiMeet",
+        "KakaoTalk": "KakaoTalk", "Line": "Line", "Meets": "Meets", "Omlet": "Omlet",
+        "Signal": "Signal", "Slack": "Slack", "Telegram": "Telegram", "Trueconf": "Trueconf",
+        "Twitch": "Twitch", "Whatsapp": "Whatsapp"
     }
 
     # Funzione per caricare immagini da una cartella
@@ -48,8 +48,11 @@ def main(original_dir, synthetic_dir, output_dir):
         original_path = Path(original_dir) / original_label
         synthetic_path = Path(synthetic_dir) / synthetic_label
 
-        if not original_path.exists() or not synthetic_path.exists():
-            print(f"Attenzione: la cartella per la classe '{original_label}' non esiste in uno dei dataset.")
+        if not original_path.exists() :
+            print(f"Attenzione: la cartella per la classe '{original_label}' non esiste in uno dei dataset originale.")
+            continue
+        if not synthetic_path.exists():
+            print(f"Attenzione: la cartella per la classe '{original_label}' non esiste in uno dei dataset sintetico.")
             continue
 
         original_images[original_label] = load_images_from_folder(original_path)
@@ -87,7 +90,7 @@ def main(original_dir, synthetic_dir, output_dir):
 # Esempio di utilizzo
 if __name__ == "__main__":
     base_dir = os.path.dirname(__file__)
-    original_dir = os.path.join(base_dir,"../dataset/immaginiPerClasseModello40k")
-    synthetic_dir = os.path.join(base_dir,"../dataset/1400ImmaginiSinteticheModello40k")
-    output_dir = os.path.join(base_dir,"../dataset/graficiModello40k")
+    original_dir = os.path.join(base_dir,"../dataset/interoDatasetGASF_RGB")
+    synthetic_dir = os.path.join(base_dir,"../dataset/1400ImmaginiSinteticheModello30")
+    output_dir = os.path.join(base_dir,"../dataset/graficiModello30k")
     main(original_dir, synthetic_dir, output_dir)
