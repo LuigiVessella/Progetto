@@ -47,10 +47,10 @@ def inverse_gasf_conversion(diagonal):
 
 # Path relativo per il file di input e la directory di output
 base_dir = os.path.dirname(__file__)
-input_file_path = "/home/franc_ubuntu/Università/Progetto/materiale/dataset/Mirage-AppxActPadding.parquet"
+input_file_path = "/home/franc_ubuntu/Università/Progetto/materiale/dataset/trainSet.parquet"
 
 # Directory per salvare le immagini GASF, usando un percorso relativo
-output_file_path = "/home/franc_ubuntu/Università/Progetto/materiale/dataset/interoDatasetGASF_RGB"
+output_file_path = "/home/franc_ubuntu/Università/Progetto/materiale/dataset/trainSetRGB"
 
 df = pd.read_parquet(input_file_path)
 

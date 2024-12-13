@@ -1,32 +1,51 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torchvision import datasets, transforms, models
-from torch.utils.data import DataLoader
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader, Subset
 import os
+from collections import defaultdict
+from PIL import Image
 
 # Impostazioni
-data_dir = "materiale/datiOriginali_GASF"  # Path al dataset
-batch_size = 32
-num_epochs = 10
-learning_rate = 0.001
+base_dir = os.path.dirname(__file__)
+data_dir = os.path.join(base_dir, "dataset/trainSetRGB")  # Path al dataset di addestramento
+test_folder = os.path.join(base_dir, "dataset/testSetRGB")  # Path al dataset di test
+batch_size = 1
+num_epochs = 30
+learning_rate = 0.0001
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Trasformazioni delle immagini
 transform = transforms.Compose([
-    transforms.Resize((10, 10)),  # Ridimensiona le immagini a 10x10 (se necessario)
-    transforms.ToTensor(),       # Converti le immagini in tensori
+    transforms.Resize((10, 10)),  # Ridimensiona le immagini a 10x10
+    transforms.ToTensor(),        # Converti le immagini in tensori
     transforms.Normalize(mean=[0.5], std=[0.5])  # Normalizzazione
 ])
 
 # Caricamento del dataset
 dataset = datasets.ImageFolder(root=data_dir, transform=transform)
-dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
-# Divisione del dataset in train e validation
-train_size = int(0.8 * len(dataset))
-val_size = len(dataset) - train_size
-train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
+# Suddivisione del dataset rispettando le classi
+def split_dataset_by_class(dataset, split_ratio=0.8):
+    class_indices = defaultdict(list)
+    for idx, (_, label) in enumerate(dataset):
+        class_indices[label].append(idx)
+
+    train_indices = []
+    val_indices = []
+
+    for label, indices in class_indices.items():
+        split_point = int(len(indices) * split_ratio)
+        train_indices.extend(indices[:split_point])
+        val_indices.extend(indices[split_point:])
+
+    train_dataset = Subset(dataset, train_indices)
+    val_dataset = Subset(dataset, val_indices)
+
+    return train_dataset, val_dataset
+
+train_dataset, val_dataset = split_dataset_by_class(dataset)
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
@@ -96,60 +115,55 @@ train_model(model, train_loader, val_loader, num_epochs)
 torch.save(model.state_dict(), "gasf_classifier.pth")
 print("Modello salvato come 'gasf_classifier.pth'.")
 
-#per testarlo:
-'''
-# Carica i pesi del modello
-model = SimpleCNN(num_classes=num_classes)  # Inizializza il modello con la stessa architettura
-model.load_state_dict(torch.load("gasf_classifier.pth"))
-model.eval()  # Imposta il modello in modalità di valutazione
-
-'''
-
-
-#su dataset test:
-'''
-from sklearn.metrics import classification_report, confusion_matrix
-import seaborn as sns
-import matplotlib.pyplot as plt
-
-# Carica il dataset di test
-test_dataset = datasets.ImageFolder(root="path_to_test_dataset", transform=transform)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
-
-# Valutazione sul dataset di test
-all_labels = []
-all_predictions = []
-
-with torch.no_grad():
+# Testing del modello su una cartella di immagini
+def test_on_images_folder_with_subfolders_and_precision(model, folder_path, transform, class_names):
+    model.eval()
+    predictions = []
     correct = 0
     total = 0
-    for images, labels in test_loader:
-        images, labels = images.to(device), labels.to(device)
-        outputs = model(images)
-        _, predicted = torch.max(outputs, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum().item()
 
-        # Salva le predizioni e le etichette reali per ulteriori analisi
-        all_labels.extend(labels.cpu().numpy())
-        all_predictions.extend(predicted.cpu().numpy())
+    for class_folder in os.listdir(folder_path):
+        class_folder_path = os.path.join(folder_path, class_folder)
+        if not os.path.isdir(class_folder_path):
+            continue
 
-    accuracy = 100 * correct / total
-    print(f"Accuratezza sul dataset di test: {accuracy:.2f}%")
+        image_paths = [os.path.join(class_folder_path, f) for f in os.listdir(class_folder_path) if f.endswith(('.png', '.jpg', '.jpeg'))]
 
-# Report di classificazione
-print("Classification Report:")
-print(classification_report(all_labels, all_predictions, target_names=test_dataset.classes))
+        with torch.no_grad():
+            for image_path in image_paths:
+                try:
+                    image = Image.open(image_path).convert("RGB")
+                    image = transform(image).unsqueeze(0).to(device)
+                    output = model(image)
+                    _, predicted = torch.max(output, 1)
+                    pred_class = class_names[predicted.item()]
+                    image_name = os.path.basename(image_path)
 
-# Matrice di confusione
-conf_matrix = confusion_matrix(all_labels, all_predictions)
-plt.figure(figsize=(10, 7))
-sns.heatmap(conf_matrix, annot=True, fmt='d', xticklabels=test_dataset.classes, yticklabels=test_dataset.classes, cmap="Blues")
-plt.xlabel("Predicted")
-plt.ylabel("Actual")
-plt.title("Confusion Matrix")
-plt.show()
+                    # Controllo se il prefisso dell'immagine corrisponde alla classe predetta
+                    image_prefix = image_name.split("_")[0]  # Ottieni il prefisso dal nome del file
+                    if image_prefix == pred_class:
+                        correct += 1
+
+                    total += 1
+                    predictions.append((image_name, pred_class))
+                except Exception as e:
+                    print(f"Errore con l'immagine {image_path}: {e}")
+
+    # Calcolo e stampa della precisione
+    precision = (correct / total) * 100 if total > 0 else 0
+    print(f"Precisione basata sul prefisso del nome dell'immagine: {precision:.2f}%")
+    return predictions, precision
 
 
+# Caricamento del modello
+try:
+    model.load_state_dict(torch.load("gasf_classifier.pth"))
+    model.to(device)
+except Exception as e:
+    print(f"Errore durante il caricamento del modello: {e}")
 
-'''
+# Predizioni
+predictions, precision = test_on_images_folder_with_subfolders_and_precision(model, test_folder, transform, dataset.classes)
+for image_name, pred_class in predictions:
+    print(f"Immagine: {image_name}, Predizione: {pred_class}")
+print(f"La precisione generale è : {precision}")
