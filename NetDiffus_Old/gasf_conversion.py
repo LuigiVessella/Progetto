@@ -37,14 +37,19 @@ def create_gasf(series):
     return gasf_matrix
 
 # Path del file parquet 
-file_path = os.path.join("materiale", "Mirage-AppxActRidotto1600Aggiunti0.parquet")
+file_path = os.path.join("materiale", "trainSet.parquet")
 
 df = pd.read_parquet(file_path)
 
 global_min, global_max = find_global_min_max_with_dir(df, pl_column="PL", dir_column="DIR")
 
 # Creare una cartella per salvare le immagini GASF
-output_folder = os.path.join("materiale","immaginiGASFdatasetOriginaleScriptMagri")
+if(file_path.__contains__('trainSet')):
+    output_folder = os.path.join("materiale","immaginiGASFTrain")
+
+else:
+    output_folder = os.path.join("materiale","immaginiGASFTest")
+
 os.makedirs(output_folder, exist_ok=True)
 
 # Iterare su tutte le righe del dataset

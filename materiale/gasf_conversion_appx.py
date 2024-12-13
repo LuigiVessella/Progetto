@@ -101,7 +101,7 @@ print(f"Valori deGASfizzati recuperati dalla diagonale: {recovered_normalized_va
 # Denormalizzazione
 recovered_original_values = denormalize_with_global(recovered_normalized_values, global_min, global_max)
 print(f"Valori originali recuperati dalla diagonale: {recovered_original_values}")
-''' 
+
 # Elaborare tutte le righe del dataset
 for idx, row in df.iterrows():
     pl = np.array(row["PL"])
@@ -121,4 +121,3 @@ for idx, row in df.iterrows():
     output_png_path = os.path.join(label_folder, f"GASF_row_{idx}.png")
     imageio.imwrite(output_png_path, gasf_rgb)
     print(f"Immagine GASF salvata per la riga {idx} in '{output_png_path}'.")
-'''
