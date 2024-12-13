@@ -2,6 +2,6 @@
 #*.png
 
 # Ignora tutti i file con estensione .pt
-#*.pt
+*.pt
 
 *.pyc
