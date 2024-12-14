@@ -4,12 +4,21 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from PIL import Image
 
-# Funzione per creare istogrammi
+# Funzione per creare istogrammi come da link
 def create_histogram(data, label, output_path):
     plt.figure()
-    plt.hist(data.ravel(), bins=256, color='blue', alpha=0.7, label=f"{label}")
+    
+    # Calcolare l'istogramma
+    hist, bins = np.histogram(data, bins=256, range=(0, 255))
+    
+    # Normalizzare l'istogramma
+    hist = hist / np.sum(hist)
+    
+    # Disegnare l'istogramma normalizzato
+    plt.plot(bins[:-1], hist, color='blue', label=f"{label}")
+    
     plt.xlabel("Pixel Intensity")
-    plt.ylabel("Frequency")
+    plt.ylabel("Normalized Frequency")
     plt.title(f"Histogram of {label}")
     plt.legend()
     plt.grid(True)
@@ -48,11 +57,11 @@ def main(original_dir, synthetic_dir, output_dir):
         original_path = Path(original_dir) / original_label
         synthetic_path = Path(synthetic_dir) / synthetic_label
 
-        if not original_path.exists() :
-            print(f"Attenzione: la cartella per la classe '{original_label}' non esiste in uno dei dataset originale.")
+        if not original_path.exists():
+            print(f"Attenzione: la cartella per la classe '{original_label}' non esiste in uno dei dataset originali.")
             continue
         if not synthetic_path.exists():
-            print(f"Attenzione: la cartella per la classe '{original_label}' non esiste in uno dei dataset sintetico.")
+            print(f"Attenzione: la cartella per la classe '{original_label}' non esiste in uno dei dataset sintetici.")
             continue
 
         original_images[original_label] = load_images_from_folder(original_path)
@@ -90,7 +99,7 @@ def main(original_dir, synthetic_dir, output_dir):
 # Esempio di utilizzo
 if __name__ == "__main__":
     base_dir = os.path.dirname(__file__)
-    original_dir = os.path.join(base_dir,"../dataset/interoDatasetGASF_RGB")
-    synthetic_dir = os.path.join(base_dir,"../dataset/1400ImmaginiSinteticheModello30")
-    output_dir = os.path.join(base_dir,"../dataset/graficiModello30k")
-    main(original_dir, synthetic_dir, output_dir)
+    original_dir = os.path.join(base_dir,"../dataset/interoDatasetGASF_RGB")  # Dataset originale senza gamma correction
+    synthetic_dir = "/home/franc_ubuntu/Università/Progetto/NetDiffus/GASFrodolfo" # Dataset con gamma correction già applicata
+    output_dir = os.path.join(base_dir,"../dataset/comparazioneRodolfo")
+    main(original_dir, synthetic_dir, output_dir)  # Non applicare gamma qui

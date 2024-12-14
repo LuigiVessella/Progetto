@@ -4,6 +4,7 @@ import os
 import imageio  # Importare imageio per il salvataggio delle immagini
 import matplotlib.pyplot as plt  # Importare matplotlib per applicare colormap
 
+
 # Funzione per calcolare il minimo e massimo globali su PL e aggiunta di DIR 
 def find_global_min_max_with_dir(df, pl_column, dir_column):
     all_pl_adjusted = []
