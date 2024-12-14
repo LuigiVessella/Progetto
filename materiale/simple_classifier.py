@@ -1,5 +1,5 @@
 #comando per eseguire lo script:
-# python3 materiale/simple_classifier.py --num_epochs 50 --learning_rate 0.0001 --train_data "dataset/trainSetRGB" --test_data "dataset/testSetRGB" --batch_sizes 1 4 8 16
+# python3 materiale/simple_classifier.py --num_epochs 50 --learning_rate 0.0001 --train_data "dataset/trainSetRGB" --test_data "dataset/testSetRGB" --batch_sizes 8 16
 
 import torch
 import torch.nn as nn
@@ -109,8 +109,8 @@ class ImprovedCNN(nn.Module):
 
 # Funzione per addestramento
 # Funzione per addestramento con early stopping
-def train_model(model, train_loader, val_loader, num_epochs, file, early_stop_patience=10):
-    best_val_accuracy = 0  # Per memorizzare la migliore perdita di validazione
+def train_model(model, train_loader, val_loader, num_epochs, file, early_stop_patience=5):
+    best_val_loss = -1  # Per memorizzare la migliore perdita di validazione
     patience_counter = 0  # Contatore per early stopping
     
     for epoch in range(num_epochs):
@@ -150,13 +150,13 @@ def train_model(model, train_loader, val_loader, num_epochs, file, early_stop_pa
                    f"Val Accuracy: {val_accuracy:.2f}%\n")
 
         # Early stopping
-        if val_accuracy > best_val_accuracy:
-            best_val_accuracy = val_accuracy
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
             patience_counter = 0  # Resetta il contatore
         else:
             patience_counter += 1
             if patience_counter >= early_stop_patience:
-                file.write(f"Early stopping at epoch {epoch+1} due to no improvement in validation accuracy.\n")
+                file.write(f"Early stopping at epoch {epoch+1} due to no improvement in validation loss.\n")
                 print(f"Early stopping triggered at epoch {epoch+1}.")
                 break
 
@@ -237,4 +237,3 @@ with open("training_results.txt", "w") as file:  # Apre il file per scrivere
         
         # Testing
         predictions, precision, class_total, class_correct = test_on_images_folder_with_subfolders_and_precision(model, test_folder, transform, dataset.classes, file)
-python3 NetDiffus_Old/scripts/image_train.py --data_dir /home/franc_ubuntu/Università/Progetto/materiale/dataset/Mirage-AppxActPadding.parquet --image_size 10 --num_channels 128 --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False --lr 1e-4 --batch_size 16
