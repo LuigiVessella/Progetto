@@ -1,8 +1,8 @@
 # Ignora tutti i file PNG
-*.png
+#*.png
 
 # Ignora tutti i file con estensione .pt
-*.npz
+#*.npz
 *.pt
 *.pth
 *.pyc
