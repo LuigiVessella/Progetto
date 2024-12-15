@@ -48,7 +48,7 @@ def load_data(
     while True:
         yield from loader
 
-
+# funziona modificata
 def _list_image_files_recursively(data_dir):
     """
     Elenca tutti i file immagine all'interno di una directory, suddivisi per classi.
@@ -108,6 +108,7 @@ class ImageDataset(Dataset):
     def __len__(self):
         return len(self.local_images)
 
+# funzione modificata
     def __getitem__(self, idx):
         path = self.local_images[idx]
         # with bf.BlobFile(path, "rb") as f:
@@ -115,27 +116,19 @@ class ImageDataset(Dataset):
         #     pil_image.load()
         # pil_image = pil_image.convert("RGB")
 
-        np_image = np.load(path)['x']
-        pil_image = Image.fromarray(np_image)
-        #pil_image = np.load(path)['x']
-        #pil_image = pil_image.reshape(pil_image.shape + (1, ))
-
-        if self.random_crop:
-            arr = random_crop_arr(pil_image, self.resolution)
-        else:
-            arr = center_crop_arr(pil_image, self.resolution)
-
-        arr = arr.reshape(arr.shape + (1,))
+        np_image = np.load(path)['gasf.npy'] # verificare chiave
+        # Non serve aggiungere un asse extra per i canali
+        arr = np_image.astype(np.float32)  # Converte in float32 se non lo è già
 
         if self.random_flip and random.random() < 0.5:
-            arr = arr[:, ::-1]
-            
-        # arr = arr.astype(np.float32) / 127.5 - 1
+            arr = arr[::-1, :]  # Applica il flip verticale
 
+        # Restituisci il batch in formato torch: [1, H, W] (canale singolo per il modello)
         out_dict = {}
         if self.local_classes is not None:
             out_dict["y"] = np.array(self.local_classes[idx], dtype=np.int64)
-        return np.transpose(arr, [2, 0, 1]), out_dict
+
+        return np.expand_dims(arr, axis=0), out_dict  # Aggiungi una dimensione extra per il canale
 
 
 def center_crop_arr(pil_image, image_size):

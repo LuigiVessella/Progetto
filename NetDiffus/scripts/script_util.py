@@ -157,6 +157,8 @@ def create_model(
             channel_mult = (1, 1, 2, 3, 4)
         elif image_size == 64:
             channel_mult = (1, 2, 3, 4)
+        elif image_size == 10:
+            channel_mult = (1, 2)
         else:
             raise ValueError(f"unsupported image size: {image_size}")
     else:
@@ -246,6 +248,8 @@ def create_classifier(
         channel_mult = (1, 1, 2, 3, 4)
     elif image_size == 64:
         channel_mult = (1, 2, 3, 4)
+    elif image_size == 10:
+        channel_mult = (1, 2)
     else:
         raise ValueError(f"unsupported image size: {image_size}")
 
@@ -255,7 +259,7 @@ def create_classifier(
 
     return EncoderUNetModel(
         image_size=image_size,
-        in_channels=3,
+        in_channels=1,
         model_channels=classifier_width,
         out_channels=1000,
         num_res_blocks=classifier_depth,
@@ -359,6 +363,8 @@ def sr_create_model(
         channel_mult = (1, 1, 2, 2, 4, 4)
     elif large_size == 64:
         channel_mult = (1, 2, 3, 4)
+    elif large_size == 10:
+        channel_mult = (1, 2)
     else:
         raise ValueError(f"unsupported large size: {large_size}")
 
