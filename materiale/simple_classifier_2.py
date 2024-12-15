@@ -1,3 +1,16 @@
+
+'''
+example of use:
+python materiale/simple_classifier_2.py \
+    --train_path materiale/dataset/trainSet.parquet \
+    --test_path materiale/dataset/testSet.parquet \
+    --num_epochs 20 \
+    --learning_rate 0.001 \
+    --batch_size 4
+
+
+'''
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
