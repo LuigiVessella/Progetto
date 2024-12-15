@@ -11,14 +11,14 @@ def deNorm(diagonale_de_gasf, global_min, global_max):
 
 # Percorsi
 base_dir = os.path.dirname(__file__)
-input_dir = os.path.join(base_dir,"../../NetDiffus/128/iterate/df/synth_models/immaginiSinteticheNPZ")
-output_parquet = os.path.join(base_dir,"../dataset/diagonaliSinteticheConvertite/")
+input_dir = "/Users/luigivessella/Desktop/Università/data analitycs/Progetto/old_material/dataset/datasetOriginaleNPZ"
+output_parquet = "/Users/luigivessella/Desktop/Università/data analitycs/Progetto/materiale/dataset/diagonaliOriginaliConvertite"
 
 os.makedirs(output_parquet, exist_ok=True)
 output_parquet_path = os.path.join(output_parquet, "diagonali_sintetiche.parquet")
 
 # Calcolo global_min e global_max
-input_file_path = "/home/franc_ubuntu/Università/Progetto/materiale/dataset/Mirage-AppxActPadding.parquet"
+input_file_path = "/Users/luigivessella/Desktop/Università/data analitycs/Progetto/materiale/dataset/Mirage-AppxActPadding.parquet"
 df_global = pd.read_parquet(input_file_path)
 
 # def find_global_min_max_with_dir(df, pl_column, dir_column):

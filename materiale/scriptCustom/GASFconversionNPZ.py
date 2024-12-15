@@ -18,7 +18,7 @@ def create_gasf(series):
 
 # Path e impostazioni
 base_dir = os.path.dirname(__file__)
-input_file_path = os.path.join(base_dir,"../dataset/Mirage-AppxActPadding.parquet"
+input_file_path = os.path.join(base_dir,"../dataset/Mirage-AppxActPadding.parquet")
 output_file_path = os.path.join(base_dir,"../dataset/datasetOriginaleInNPZ") #da passare come argomento a image_train.py
 
 df = pd.read_parquet(input_file_path)
