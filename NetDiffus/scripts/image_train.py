@@ -99,7 +99,7 @@ def create_argparser():
         log_interval=10,  # Frequenza dei log invariata
         save_interval=5000,  # Salva il modello ogni 1000
         resume_checkpoint="",  # Default, nessun checkpoint
-        use_fp16=False,  # Disabilitato per compatibilità GPU
+        use_fp16=True,  # Disabilitato per compatibilità GPU
         fp16_scale_growth=1e-3,  # Non usato con FP16 disabilitato
     )
     defaults.update(model_and_diffusion_defaults())

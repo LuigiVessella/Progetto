@@ -1,0 +1,18 @@
+Logging to 128/iterate/df/synth_models
+creating model and diffusion...
+sampling...
+Generated 100 samples for class ClashRoyale
+Generated 100 samples for class Crunchyroll
+Generated 100 samples for class Discord
+Generated 100 samples for class JitsiMeet
+Generated 100 samples for class KakaoTalk
+Generated 100 samples for class Line
+Generated 100 samples for class Meets
+Generated 100 samples for class Omlet
+Generated 100 samples for class Signal
+Generated 100 samples for class Slack
+Generated 100 samples for class Telegram
+Generated 100 samples for class Trueconf
+Generated 100 samples for class Twitch
+Generated 100 samples for class Whatsapp
+sampling complete

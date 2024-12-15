@@ -3,11 +3,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Percorsi dei file parquet
-file1_path = "/home/franc_ubuntu/Università/Progetto/materiale/dataset/Mirage-AppxActPadding.parquet"
-file2_path = "/home/franc_ubuntu/Università/Progetto/NetDiffus/128/iterate/df/synth_models/diagonaliConvertite/diagonali_parquet.parquet"
+base_dir = os.path.dirname(__file__)
+file1_path = os.path.join(base_dir,"../dataset/Mirage-AppxActPadding.parquet") #path del dataset originale
+file2_path = os.path.join(base_dir,"../dataset/diagonaliSinteticheConvertite/diagonali_sintetiche.parquet") #path del dataset sintetico
 
 # Percorso per la cartella Grafici
-base_output_dir = os.path.join(os.path.dirname(file1_path), "Grafici")
+base_output_dir = os.path.join(os.path.dirname(file1_path), "GraficiComparativiOriginale_Sintetico")
 os.makedirs(base_output_dir, exist_ok=True)
 
 # Carica i file parquet in DataFrame

@@ -10,32 +10,45 @@ def deNorm(diagonale_de_gasf, global_min, global_max):
     return diagonale_de_gasf * (global_max - global_min) + global_min
 
 # Percorsi
-input_dir = "/home/franc_ubuntu/Università/Progetto/NetDiffus/128/iterate/df/synth_models/immaginiSinteticheNPZ"
-output_parquet = "/home/franc_ubuntu/Università/Progetto/NetDiffus/128/iterate/df/synth_models/diagonaliConvertite/"
+base_dir = os.path.dirname(__file__)
+input_dir = os.path.join(base_dir,"../../NetDiffus/128/iterate/df/synth_models/immaginiSinteticheNPZ")
+output_parquet = os.path.join(base_dir,"../dataset/diagonaliSinteticheConvertite/")
+
 os.makedirs(output_parquet, exist_ok=True)
-output_parquet_path = os.path.join(output_parquet, "diagonali_parquet.parquet")
+output_parquet_path = os.path.join(output_parquet, "diagonali_sintetiche.parquet")
 
 # Calcolo global_min e global_max
 input_file_path = "/home/franc_ubuntu/Università/Progetto/materiale/dataset/Mirage-AppxActPadding.parquet"
 df_global = pd.read_parquet(input_file_path)
 
-def find_global_min_max_with_dir(df, pl_column, dir_column):
+# def find_global_min_max_with_dir(df, pl_column, dir_column):
+#     all_pl_adjusted = []
+#     for _, row in df.iterrows():
+#         pl = row[pl_column]
+#         dir = row[dir_column]
+
+#         dir_value = dir[0] if isinstance(dir, (np.ndarray, list)) else dir
+#         if dir_value == 0:
+#             pl = [-p for p in pl]
+
+#         all_pl_adjusted.extend(pl)
+
+#     global_min = min(all_pl_adjusted)
+#     global_max = max(all_pl_adjusted)
+#     return global_min, global_max
+def find_global_min_max(df, pl_column):
     all_pl_adjusted = []
     for _, row in df.iterrows():
         pl = row[pl_column]
-        dir = row[dir_column]
-
-        dir_value = dir[0] if isinstance(dir, (np.ndarray, list)) else dir
-        if dir_value == 0:
-            pl = [-p for p in pl]
-
         all_pl_adjusted.extend(pl)
 
     global_min = min(all_pl_adjusted)
     global_max = max(all_pl_adjusted)
     return global_min, global_max
 
-global_min, global_max = find_global_min_max_with_dir(df_global, pl_column="PL", dir_column="DIR")
+#global_min, global_max = find_global_min_max_with_dir(df_global, pl_column="PL", dir_column="DIR")
+global_min, global_max = find_global_min_max(df_global, pl_column="PL")
+
 
 # Inizializzazione DataFrame vuoto
 result_df = pd.DataFrame(columns=["PL", "DIR", "LABEL"])
@@ -44,6 +57,7 @@ result_df = pd.DataFrame(columns=["PL", "DIR", "LABEL"])
 for file_name in os.listdir(input_dir):
     if file_name.endswith(".npz"):
         class_label = file_name.split("_")[0]  # Estrai la classe dal nome del file
+        class_label = class_label.replace(".npz", "")  # Rimuovi il suffisso ".npz"
         file_path = os.path.join(input_dir, file_name)
 
         # Carica il file NPZ
@@ -58,8 +72,11 @@ for file_name in os.listdir(input_dir):
             diagonale_de_gasf = deGASF(diagonale)
             diagonale_de_norm = deNorm(diagonale_de_gasf, global_min, global_max)
 
+            # Arrotonda i valori di PL (senza decimali)
+            diagonale_de_norm = [round(value) for value in diagonale_de_norm]
+
             # Crea DIR basato sui valori di PL
-            dir_values = [1 if value >= 0 else 0 for value in diagonale_de_norm]
+            #dir_values = [1 if value >= 0 else 0 for value in diagonale_de_norm]
 
             # Rimuovi il segno meno dai valori di PL
             diagonale_de_norm = [abs(value) for value in diagonale_de_norm]
@@ -71,7 +88,7 @@ for file_name in os.listdir(input_dir):
                     pd.DataFrame(
                         {
                             "PL": [diagonale_de_norm],
-                            "DIR": [dir_values],
+                            #"DIR": [dir_values],
                             "LABEL": [class_label]
                         }
                     )
