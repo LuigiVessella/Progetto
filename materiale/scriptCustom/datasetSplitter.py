@@ -26,6 +26,10 @@ for label, group in data.groupby(label_column):
 train_data = pd.concat(train_data).reset_index(drop=True)
 test_data = pd.concat(test_data).reset_index(drop=True)
 
+train_data = train_data.sample(frac=1, random_state=42).reset_index(drop=True)
+test_data = test_data.sample(frac=1, random_state=42).reset_index(drop=True)
+
+
 # Salva i sotto-dataset
 train_output_path = os.path.join(base_path,'../dataset/trainSet.parquet')
 test_output_path = os.path.join(base_path,'../dataset/testSet.parquet')
