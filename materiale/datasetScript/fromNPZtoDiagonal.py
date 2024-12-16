@@ -11,9 +11,10 @@ def deNorm(diagonale_de_gasf, global_min, global_max):
 
 # Percorsi
 base_dir = os.path.dirname(__file__)
-input_dir = "/Users/luigivessella/Desktop/Università/data analitycs/Progetto/NetDiffus/128/iterate/df/synth_models/immaginiSinteticheNPZ"
-output_parquet = "/Users/luigivessella/Desktop/Università/data analitycs/Progetto/materiale/dataset/diagonaliSinteticheConvertite"
-
+input_dir = os.path.join(base_dir, "../../NetDiffus/128/iterate/df/synth_models/immaginiSinteticheNPZ")
+#input_dir = "/Users/luigivessella/Desktop/Università/data analitycs/Progetto/NetDiffus/128/iterate/df/synth_models/immaginiSinteticheNPZ"
+#output_parquet = "/Users/luigivessella/Desktop/Università/data analitycs/Progetto/materiale/dataset/diagonaliSinteticheConvertite"
+output_parquet = os.path.join(base_dir, "../dataset/diagonaliSinteticheConvertite")
 os.makedirs(output_parquet, exist_ok=True)
 output_parquet_path = os.path.join(output_parquet, "diagonali_sintetiche.parquet")
 

@@ -12,12 +12,14 @@ from script_util import (
     args_to_dict,
 )
 from pathlib import Path
-
+base_dir = os.path.dirname(__file__)
+dataset_dir = os.path.join(base_dir, "../../materiale/dataset/datasetConNPZ")
+output_dir = os.path.join(base_dir,"../128/iterate/df/synth_models")
 # Recupera il percorso delle sottocartelle del dataset
-dataset_dir = Path("/home/franc_ubuntu/Università/Progetto/materiale/dataset/datasetConNPZ")  # Cambia con il percorso del tuo dataset
+#dataset_dir = Path("/home/franc_ubuntu/Università/Progetto/materiale/dataset/datasetConNPZ")  # Cambia con il percorso del tuo dataset
 class_folders = sorted(os.listdir(dataset_dir))  
 NUM_CLASSES = len(class_folders)  
-output_dir = "/home/franc_ubuntu/Università/Progetto/NetDiffus/128/iterate/df/synth_models"
+#output_dir = "/home/franc_ubuntu/Università/Progetto/NetDiffus/128/iterate/df/synth_models"
 
 
 # Crea un dizionario che mappa l'indice della classe al nome
