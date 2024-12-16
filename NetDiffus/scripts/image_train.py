@@ -2,6 +2,14 @@
 Train a diffusion model on images.
 """
 
+'''
+How to launch it:
+
+ python NetDiffus/scripts/image_train.py --data_dir materiale/dataset/datasetConNPZ --image_size 10 --num_channels 128 
+ --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True --class_cond True 
+ --rescale_learned_sigmas False --rescale_timesteps False --lr 1e-4 --batch_size 4
+'''
+
 import torch
 print(f'{torch.cuda.is_available()=}')
 
@@ -88,7 +96,7 @@ def main():
 
 def create_argparser():
     defaults = dict(
-        data_dir="Output_images_10_minmax",  # Directory del dataset
+        data_dir="/Users/luigivessella/Desktop/Università/data analitycs/Progetto/materiale/dataset/datasetOriginaleInNPZ",  # Directory del dataset
         schedule_sampler="uniform",  # Campionamento uniforme
         lr=4e-4,
         weight_decay=0.0,  # Nessuna penalizzazione dei pesi
@@ -97,7 +105,7 @@ def create_argparser():
         microbatch=-1,  # Disabilitato
         ema_rate="0.999",  # EMA leggermente più reattivo
         log_interval=10,  # Frequenza dei log invariata
-        save_interval=5000,  # Salva il modello ogni 1000
+        save_interval=1000,  # Salva il modello ogni 1000
         resume_checkpoint="",  # Default, nessun checkpoint
         use_fp16=True,  # Disabilitato per compatibilità GPU
         fp16_scale_growth=1e-3,  # Non usato con FP16 disabilitato

@@ -1,3 +1,16 @@
+'''
+python NetDiffus/scripts/image_sample.py 
+--model_path NetDiffus/128/iterate/df/synth_models/model055000.pt 
+--num_sample 64  --batch_size 16
+
+  python NetDiffus/scripts/image_sample.py  --model_path 128/iterate/df/synth_models/model001000.pt --image_size 10 
+  --num_channels 128 --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True 
+  --class_cond True --rescale_learned_sigmas False --rescale_timesteps False
+
+'''
+
+
+
 import argparse
 import os
 import numpy as np
@@ -14,7 +27,7 @@ from script_util import (
 from pathlib import Path
 base_dir = os.path.dirname(__file__)
 dataset_dir = os.path.join(base_dir, "../../materiale/dataset/datasetConNPZ")
-output_dir = os.path.join(base_dir,"../128/iterate/df/synth_models")
+output_dir = os.path.join(base_dir,"../../128/iterate/df/synth_models/luigiNpzSint")
 # Recupera il percorso delle sottocartelle del dataset
 #dataset_dir = Path("/home/franc_ubuntu/Università/Progetto/materiale/dataset/datasetConNPZ")  # Cambia con il percorso del tuo dataset
 class_folders = sorted(os.listdir(dataset_dir))  
@@ -80,7 +93,7 @@ def main():
         sample = sample.contiguous().cpu().numpy()  # Converte a NumPy
 
         # Salva tutte le immagini generate per questa classe in un unico file .npz
-        save_samples_to_npz(sample, class_idx, output_dir="/home/franc_ubuntu/Università/Progetto/NetDiffus/128/iterate/df/synth_models/immaginiSinteticheNPZ")
+        save_samples_to_npz(sample, class_idx, output_dir="/Users/luigivessella/Desktop/Università/data analitycs/Progetto/128/iterate/df/synth_models/luigiNpzSint")
 
         logger.log(f"Generated {args.num_samples} samples for class {class_folder}")
 
@@ -90,8 +103,8 @@ def main():
 def create_argparser():
     defaults = dict(
         clip_denoised=True,
-        num_samples=100, #numero di sample generati per classe
-        batch_size=100,
+        num_samples=10, #numero di sample generati per classe
+        batch_size=10,
         use_ddim=False,
         model_path="",
     )
