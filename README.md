@@ -8,33 +8,46 @@
 - tqdm
 - blobfile>=1.0.5
 
+# Main problem
 
 
 # How to start NetDiffus
 
-> :warning: This set up is only for development/prototyping <u>DO NOT</u> use it in production :warning:
-
-
 To run gasf_conversion go in root directory Progetto/ and type 
 
 ```bash
-python NetDiffus/gasf_conversion.py materiale/Mirage-AppxActRidotto1600Aggiunti0.parquet materiale/datiOriginali_GASF
-```
+python materiale/GASFconversionNPZ.py
 
+```
+This script allow us to convert original PL series into NPZ numeric file beetween 0 and 1, this make simple the
+inverse process (from npz to original series) and allow us to train NetDiffus on these files.
 
 To run image_train.py put make sure you're again in Progetto/ and type the follow comand:
 
 ```bash
-python NetDiffus/scripts/image_train.py --data_dir materiale/datiOriginali_GASF --image_size 128 --num_channels 128 --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False --lr 5e-5 --batch_size 1
+ python NetDiffus/scripts/image_train.py --data_dir materiale/dataset/datasetConNPZ --image_size 10 --num_channels 128 
+ --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True --class_cond True 
+ --rescale_learned_sigmas False --rescale_timesteps False --lr 1e-4 --batch_size 4
 ```
+This script starts NetDiffus training process based on the NPZ converted original data.
+
 
 To run image_sample, go again in Progetto/ and
 
 ```bash
-  python NetDiffus/scripts/image_sample.py --model_path 128/iterate/df/synth_models/model003000.pt --image_size 10 --num_channels 128 --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False
+  python NetDiffus/scripts/image_sample.py  --model_path 128/iterate/df/synth_models/model001000.pt --image_size 10 
+  --num_channels 128 --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True 
+  --class_cond True --rescale_learned_sigmas False --rescale_timesteps False
 ```
+This script starts NetDiffus generation process based on the trained model that the previus script gives us,
+The sintetic data is very similar to the original, as you can see in [grafici](materiale/GraficiDistribuzione/Grafici)
 
-# How to start NetDiffus_Old
+<img src="materiale/GraficiDistribuzione/Grafici/Globale/Confronto_Originale_Globale.png">
+<img src="materiale/GraficiDistribuzione/Grafici/Globale/Confronto_Sintetico_Globale.png">
+
+
+
+# How to start NetDiffus_Old (Deprecated)
 
 > :warning: This set up is only for development/prototyping <u>DO NOT</u> use it in production :warning:
 

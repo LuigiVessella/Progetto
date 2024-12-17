@@ -1,3 +1,10 @@
+'''
+Questo script ha la funzione di prendere in input il file npz generato sinteticamente dal modello
+NetDiffus e di ritornare indietro alle serie temporali PL.
+E' stato testato sui file npz delle serie originali e si riesce a tornare indietro con successo.
+
+'''
+
 import os
 import numpy as np
 import pandas as pd
@@ -20,6 +27,7 @@ output_parquet_path = os.path.join(output_parquet, "diagonali_sintetiche.parquet
 
 # Calcolo global_min e global_max
 input_file_path = "/Users/luigivessella/Desktop/Università/data analitycs/Progetto/materiale/dataset/Mirage-AppxActPadding.parquet"
+input_file_path = os.path.join(base_dir, "../dataset/Mirage-AppxActPadding.parquet")
 df_global = pd.read_parquet(input_file_path)
 
 # def find_global_min_max_with_dir(df, pl_column, dir_column):

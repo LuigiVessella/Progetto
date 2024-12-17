@@ -1,8 +1,4 @@
 '''
-python NetDiffus/scripts/image_sample.py 
---model_path NetDiffus/128/iterate/df/synth_models/model055000.pt 
---num_sample 64  --batch_size 16
-
   python NetDiffus/scripts/image_sample.py  --model_path 128/iterate/df/synth_models/model001000.pt --image_size 10 
   --num_channels 128 --num_res_blocks 3 --diffusion_steps 100 --noise_schedule cosine --learn_sigma True 
   --class_cond True --rescale_learned_sigmas False --rescale_timesteps False
