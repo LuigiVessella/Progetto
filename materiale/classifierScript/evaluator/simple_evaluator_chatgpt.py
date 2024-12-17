@@ -6,7 +6,7 @@ from sklearn.preprocessing import KBinsDiscretizer
 from pathlib import Path
 
 sys.path.append('/media/data/facil-tc/src/')
-from evaluator.micro_quality_evaluator import BiflowEvaluator
+from micro_quality_evaluator import BiflowEvaluator
 
 def compute_distances(real_histograms, synthetic_histograms, n_features):
     """
