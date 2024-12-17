@@ -11,7 +11,8 @@
 # Main problem
 
 
-# How to start NetDiffus
+# How to start NetDiffus2.0
+NetDiffus 2.0 is NetDiffus with the ability to go back to time series once synthetic samples have been generated
 
 To run gasf_conversion go in root directory Progetto/ and type 
 
