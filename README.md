@@ -9,7 +9,8 @@
 - blobfile>=1.0.5
 
 # Main problem
-
+The original NetDiffus paper tells us that by leaving the images at the original resolution it is possible to go back to the original time series, but it has been verified that by saving in .png we lose important information.
+Saving in .npz format allowed us to solve this problem.
 
 # How to start NetDiffus2.0
 NetDiffus 2.0 is NetDiffus with the ability to go back to time series once synthetic samples have been generated
