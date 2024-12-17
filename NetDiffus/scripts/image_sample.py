@@ -22,7 +22,7 @@ from script_util import (
 )
 from pathlib import Path
 base_dir = os.path.dirname(__file__)
-dataset_dir = os.path.join(base_dir, "../../materiale/dataset/datasetConNPZ")
+dataset_dir = os.path.join(base_dir, "../../materiale/dataset/datasetOriginaleInNPZ")
 output_dir = os.path.join(base_dir,"../../128/iterate/df/synth_models/luigiNpzSint")
 # Recupera il percorso delle sottocartelle del dataset
 #dataset_dir = Path("/home/franc_ubuntu/Università/Progetto/materiale/dataset/datasetConNPZ")  # Cambia con il percorso del tuo dataset
@@ -100,7 +100,7 @@ def create_argparser():
     defaults = dict(
         clip_denoised=True,
         num_samples=10, #numero di sample generati per classe
-        batch_size=10,
+        batch_size=1,
         use_ddim=False,
         model_path="",
     )

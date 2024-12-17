@@ -54,7 +54,7 @@ def load_parquet_as_array(file_path, n_pkts):
     df = pd.read_parquet(file_path)
    # df = df[~df['IS_TRAIN']]
     labels = df["LABEL"].values
-    features = df[["PL"]].values
+    features = df[["PL", "DIR"]].values
     # Extract all the lists into a numpy array
     data = np.array([[[packet for packet in feature[:n_pkts]] for feature in sample] for sample in features])
     # Transpose to (samples, time_steps, features)
