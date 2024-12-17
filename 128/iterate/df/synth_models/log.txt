@@ -1,6 +1,0 @@
-Logging to 128/iterate/df/synth_models
-creating model and diffusion...
-sampling...
-Generated 10 samples for class ClashRoyale
-Generated 10 samples for class Crunchyroll
-Generated 10 samples for class Discord
