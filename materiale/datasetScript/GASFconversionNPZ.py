@@ -24,8 +24,17 @@ output_file_path = os.path.join(base_dir,"../dataset/datasetOriginaleInNPZ") #da
 df = pd.read_parquet(input_file_path)
 
 # Calcolo del global_min e global_max per l'intera colonna PL
-all_pl_values = [value for pl_list in df["PL"] for value in pl_list]
+all_pl_values = []
+for _, row in df.iterrows():
+    pl = np.array(row["PL"])
+    dir = np.array(row["DIR"])
+
+    # Aggiusta il segno di PL in base a DIR
+    pl_adjusted = np.array([p if d != 0 else -p for p, d in zip(pl, dir)])
+    all_pl_values.extend(pl_adjusted)
+
 global_min, global_max = min(all_pl_values), max(all_pl_values)
+print(global_min, global_max)
 
 # Creare una cartella per salvare le immagini GASF
 os.makedirs(output_file_path, exist_ok=True)
@@ -34,9 +43,13 @@ os.makedirs(output_file_path, exist_ok=True)
 for idx, row in df.iterrows():
     # Mantieni la serie PL invariata
     pl = np.array(row["PL"])
+    dir = np.array(row["DIR"])
+
+    # Aggiusta il segno di PL in base a DIR
+    pl_adjusted = np.array([p if d != 0 else -p for p, d in zip(pl, dir)])
 
     # Normalizza la serie
-    normalized_series = normalize_with_global(pl, global_min, global_max)
+    normalized_series = normalize_with_global(pl_adjusted, global_min, global_max)
 
     # Crea la matrice GASF
     gasf = create_gasf(normalized_series)
@@ -56,3 +69,5 @@ for idx, row in df.iterrows():
     np.savez(output_npz_path, gasf=gasf_resized)
 
     print(f"Immagine GASF salvata per la riga {idx} in '{output_npz_path}'.")
+    
+print(global_min, global_max)

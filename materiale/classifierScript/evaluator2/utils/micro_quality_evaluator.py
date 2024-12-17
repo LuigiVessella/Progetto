@@ -65,11 +65,14 @@ class BiflowEvaluator():
             r_features = self.real_features[c_indices]
             s_features = self.syn_features[c_syn_indices]           
             #class estimation pdf
-            match args.estimator_type:
-                case "kd":
-                    DensityEstimator = kd
-                case "gmm":
-                    DensityEstimator = gmm
+           # Class estimation pdf
+            if args.estimator_type == "kd":
+                DensityEstimator = kd
+            elif args.estimator_type == "gmm":
+                DensityEstimator = gmm
+            else:
+                raise ValueError(f"Unknown estimator_type: {args.estimator_type}")
+
             
             estimator = DensityEstimator()
             self.estimators[c] = estimator.train(features=r_features,args=args, to_optimized=True)
@@ -251,16 +254,22 @@ class BiflowEvaluator():
             r_features = real_features[c_indices]
             s_features = syn_features[c_syn_indices]
             # pdf estimations for class c
-            match args.estimator_type:
-                case "kd":
-                    r_pdfs = kd.get_pdf(estimators[c], r_features)
-                    s_pdfs =kd.get_pdf(estimators[c], s_features)
-                case "gmm":
-                    r_pdfs = gmm.get_pdf(estimators[c], r_features)
-                    s_pdfs = gmm.get_pdf(estimators[c], s_features)
-                case "histogram":
-                    r_pdfs, s_pdfs = histogram.get_pdfs(real_features=r_features,syn_features=s_features,
-                                                         n_bins=args.n_bin,n_pkt = pkt_num)
+            if args.estimator_type == "kd":
+                r_pdfs = kd.get_pdf(estimators[c], r_features)
+                s_pdfs = kd.get_pdf(estimators[c], s_features)
+            elif args.estimator_type == "gmm":
+                r_pdfs = gmm.get_pdf(estimators[c], r_features)
+                s_pdfs = gmm.get_pdf(estimators[c], s_features)
+            elif args.estimator_type == "histogram":
+                r_pdfs, s_pdfs = histogram.get_pdfs(
+                    real_features=r_features,
+                    syn_features=s_features,
+                    n_bins=args.n_bin,
+                    n_pkt=pkt_num
+                )
+            else:
+                raise ValueError(f"Unsupported estimator type: {args.estimator_type}")
+
             real_pdfs[c] = r_pdfs
             syn_pdfs[c] = s_pdfs
             
@@ -276,11 +285,13 @@ class BiflowEvaluator():
                             hellinger_dist[c_syn_indices[i],p,f] = BiflowEvaluator.compute_hd(pdfs_avg, s_pdfs[i, p, f])
                             tot_var_dist[c_syn_indices[i],p,f] = BiflowEvaluator.compute_tvd(pdfs_avg, s_pdfs[i, p, f])
                 
-                match args.estimator_type:
-                    case "kd":
-                        log_likeh[c_syn_indices,:,:] = kd.log_likelihood(estimators[c], s_features)
-                    case "gmm":
-                        log_likeh[c_syn_indices,:,:] = gmm.log_likelihood(estimators[c], s_features)          
+                if args.estimator_type == "kd":
+                    log_likeh[c_syn_indices, :, :] = kd.log_likelihood(estimators[c], s_features)
+                elif args.estimator_type == "gmm":
+                    log_likeh[c_syn_indices, :, :] = gmm.log_likelihood(estimators[c], s_features)
+                else:
+                    raise ValueError(f"Unsupported estimator type: {args.estimator_type}")
+            
                         
                 class_jsd[class_order[c]] = np.mean(jsd[c_syn_indices], axis=(0, 1))
                 class_log_likeh[class_order[c]] = np.mean(log_likeh[c_syn_indices],axis=(0, 1))
@@ -357,24 +368,38 @@ class BiflowEvaluator():
         parser.add_argument('--estimator-type', default='kd', type=str,required=False, dest='estimator_type',choices=['kd','gmm','histogram'],
             help='Specifies the density estimator method [default=%(default)s means kernel density estimation (KernelDensity) ]')
         temp_args,_ = parser.parse_known_args(args)
-        match temp_args.estimator_type:
-            case "kd":
-                parser.add_argument('--kernel', default='gaussian', type=str,required=False, dest='kernel',choices=['gaussian','epanechnikov','exponential','cosine'],
-                    help='The kernel to use (default=%(default)s)')
-                parser.add_argument('--bandwidth', default=1.0, type=float,required=False, dest='bandwidth', help='The bandwidth of the kernel as float (default=%(default)s)')
-                parser.add_argument('--metric', default="euclidean", type=str,required=False, dest='metric',
-                    help='Metric to use for distance computation. See the documentation of scipy.spatial.distance and the metrics listed in distance_metrics for valid metric values. (default=%(default)s)')
-            case "gmm":
-                parser.add_argument('--init-method', default='k-means++', type=str,required=False, dest='init_method',choices=['kmeans', 'k-means++', 'random', 'random_from_data'],
-                    help='The method used to initialize the weights, the means and the precisions. Responsibilities are initialized randomly if random.\n'+
-                    'selects initial cluster centroids using sampling based on an empirical probability distribution of the points contribution to the overall inertia if k-means++.'+ 
-                    'Algorithm: greedy k-means++ (several trials at each sampling step and choosing the best centroid among them)\n (default=%(default)s)')
-                parser.add_argument('--covariance-type', default='full',  type=str,required=False, dest='cov_type',choices=[ 'full', 'tied', 'diag', 'spherical'],
-                                    help='full: each component has its own general covariance matrix. tied: all components share the same general covariance matrix.\ndiag: each component has its own diagonal covariance matrix.+'
-                                            'spherical: each component has its own single variance. (default=%(default)s)')
-                parser.add_argument('--seed', default=0, type=int,required=False, 
-                    help='Seed to use for distance computation.')
-            case "histogram":
-                parser.add_argument('--n-bin', default=100, type=int, required=False,  help='Bin number for feature binarization (default=%(default)s)')
+        if temp_args.estimator_type == "kd":
+            parser.add_argument('--kernel', default='gaussian', type=str, required=False, dest='kernel',
+                                choices=['gaussian', 'epanechnikov', 'exponential', 'cosine'],
+                                help='The kernel to use (default=%(default)s)')
+            parser.add_argument('--bandwidth', default=1.0, type=float, required=False, dest='bandwidth', 
+                                help='The bandwidth of the kernel as float (default=%(default)s)')
+            parser.add_argument('--metric', default="euclidean", type=str, required=False, dest='metric',
+                                help='Metric to use for distance computation. See the documentation of scipy.spatial.distance '
+                                    'and the metrics listed in distance_metrics for valid metric values. (default=%(default)s)')
+        elif temp_args.estimator_type == "gmm":
+            parser.add_argument('--init-method', default='k-means++', type=str, required=False, dest='init_method',
+                                choices=['kmeans', 'k-means++', 'random', 'random_from_data'],
+                                help='The method used to initialize the weights, the means and the precisions. '
+                                    'Responsibilities are initialized randomly if random. '
+                                    'Selects initial cluster centroids using sampling based on an empirical probability '
+                                    'distribution of the points contribution to the overall inertia if k-means++. '
+                                    'Algorithm: greedy k-means++ (several trials at each sampling step and choosing the best '
+                                    'centroid among them)\n (default=%(default)s)')
+            parser.add_argument('--covariance-type', default='full', type=str, required=False, dest='cov_type',
+                                choices=['full', 'tied', 'diag', 'spherical'],
+                                help='full: each component has its own general covariance matrix. '
+                                    'tied: all components share the same general covariance matrix. '
+                                    'diag: each component has its own diagonal covariance matrix. '
+                                    'spherical: each component has its own single variance. (default=%(default)s)')
+            parser.add_argument('--seed', default=0, type=int, required=False, 
+                                help='Seed to use for distance computation.')
+        elif temp_args.estimator_type == "histogram":
+            parser.add_argument('--n-bin', default=100, type=int, required=False, 
+                                help='Bin number for feature binarization (default=%(default)s)')
+        else:
+            raise ValueError(f"Unsupported estimator type: {temp_args.estimator_type}")
+
+        
 
         return parser.parse_known_args(args)

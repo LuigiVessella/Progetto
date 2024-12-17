@@ -45,18 +45,18 @@ df_global = pd.read_parquet(input_file_path)
 #     global_min = min(all_pl_adjusted)
 #     global_max = max(all_pl_adjusted)
 #     return global_min, global_max
-def find_global_min_max(df, pl_column):
-    all_pl_adjusted = []
-    for _, row in df.iterrows():
-        pl = row[pl_column]
-        all_pl_adjusted.extend(pl)
+all_pl_values = []
+for _, row in df_global.iterrows():
+    pl = np.array(row["PL"])
+    dir = np.array(row["DIR"])
 
-    global_min = min(all_pl_adjusted)
-    global_max = max(all_pl_adjusted)
-    return global_min, global_max
+    # Aggiusta il segno di PL in base a DIR
+    pl_adjusted = np.array([p if d != 0 else -p for p, d in zip(pl, dir)])
+    all_pl_values.extend(pl_adjusted)
 
-#global_min, global_max = find_global_min_max_with_dir(df_global, pl_column="PL", dir_column="DIR")
-global_min, global_max = find_global_min_max(df_global, pl_column="PL")
+global_min, global_max = min(all_pl_values), max(all_pl_values)
+# Calcolo global_min e global_max
+print(global_min, global_max)
 
 
 # Inizializzazione DataFrame vuoto
@@ -82,13 +82,8 @@ for file_name in os.listdir(input_dir):
             diagonale_de_norm = deNorm(diagonale_de_gasf, global_min, global_max)
 
             # Arrotonda i valori di PL (senza decimali)
-            diagonale_de_norm = [round(value) for value in diagonale_de_norm]
-
-            # Crea DIR basato sui valori di PL
-            #dir_values = [1 if value >= 0 else 0 for value in diagonale_de_norm]
-
-            # Rimuovi il segno meno dai valori di PL
-            diagonale_de_norm = [abs(value) for value in diagonale_de_norm]
+            dir_values = [1 if value >= 0 else 0 for value in diagonale_de_norm]
+            diagonale_de_norm = [abs(round(value)) for value in diagonale_de_norm]
 
             # Aggiungi al DataFrame
             result_df = pd.concat(
@@ -97,7 +92,7 @@ for file_name in os.listdir(input_dir):
                     pd.DataFrame(
                         {
                             "PL": [diagonale_de_norm],
-                            #"DIR": [dir_values],
+                            "DIR": [dir_values],
                             "LABEL": [class_label]
                         }
                     )

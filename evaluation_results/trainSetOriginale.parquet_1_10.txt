@@ -1,0 +1,56 @@
+Class ClashRoyale:
+   Jensen-Shannon Divergence (per feature): [0.08402891]
+   Hellinger Distance (per feature): [0.08402891]
+   Total Variation Distance (per feature): [0.05462659]
+Class Crunchyroll:
+   Jensen-Shannon Divergence (per feature): [0.11565503]
+   Hellinger Distance (per feature): [0.11565503]
+   Total Variation Distance (per feature): [0.1466524]
+Class Discord:
+   Jensen-Shannon Divergence (per feature): [0.08713968]
+   Hellinger Distance (per feature): [0.08713968]
+   Total Variation Distance (per feature): [0.0923521]
+Class JitsiMeet:
+   Jensen-Shannon Divergence (per feature): [0.10169561]
+   Hellinger Distance (per feature): [0.10169561]
+   Total Variation Distance (per feature): [0.10796721]
+Class KakaoTalk:
+   Jensen-Shannon Divergence (per feature): [0.16640536]
+   Hellinger Distance (per feature): [0.16640536]
+   Total Variation Distance (per feature): [0.20221886]
+Class Line:
+   Jensen-Shannon Divergence (per feature): [0.12313575]
+   Hellinger Distance (per feature): [0.12313575]
+   Total Variation Distance (per feature): [0.16189947]
+Class Meets:
+   Jensen-Shannon Divergence (per feature): [0.2091688]
+   Hellinger Distance (per feature): [0.2091688]
+   Total Variation Distance (per feature): [0.15328238]
+Class Omlet:
+   Jensen-Shannon Divergence (per feature): [0.13288979]
+   Hellinger Distance (per feature): [0.13288979]
+   Total Variation Distance (per feature): [0.16996568]
+Class Signal:
+   Jensen-Shannon Divergence (per feature): [0.11020779]
+   Hellinger Distance (per feature): [0.11020779]
+   Total Variation Distance (per feature): [0.12881425]
+Class Slack:
+   Jensen-Shannon Divergence (per feature): [0.10110268]
+   Hellinger Distance (per feature): [0.10110268]
+   Total Variation Distance (per feature): [0.10294632]
+Class Telegram:
+   Jensen-Shannon Divergence (per feature): [0.06827128]
+   Hellinger Distance (per feature): [0.06827128]
+   Total Variation Distance (per feature): [0.07621325]
+Class Trueconf:
+   Jensen-Shannon Divergence (per feature): [0.12401306]
+   Hellinger Distance (per feature): [0.12401306]
+   Total Variation Distance (per feature): [0.1598417]
+Class Twitch:
+   Jensen-Shannon Divergence (per feature): [0.08860284]
+   Hellinger Distance (per feature): [0.08860284]
+   Total Variation Distance (per feature): [0.0982838]
+Class Whatsapp:
+   Jensen-Shannon Divergence (per feature): [0.07180448]
+   Hellinger Distance (per feature): [0.07180448]
+   Total Variation Distance (per feature): [0.06611099]
