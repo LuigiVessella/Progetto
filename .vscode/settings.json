@@ -1,6 +1,7 @@
 {
     "python.analysis.extraPaths": [
         "./guided-diffusion-main",
-        "./materiale/classifierScript/evaluator"
+        "./materiale/classifierScript/evaluator",
+        "./materiale/classifierScript/evaluator2"
     ]
 }
