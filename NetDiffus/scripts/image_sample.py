@@ -100,7 +100,7 @@ def create_argparser():
     defaults = dict(
         clip_denoised=True,
         num_samples=10, #numero di sample generati per classe
-        batch_size=1,
+        batch_size=10,
         use_ddim=False,
         model_path="",
     )

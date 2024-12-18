@@ -104,8 +104,8 @@ def create_argparser():
         batch_size=1,  # Batch più grande per GPU medie
         microbatch=-1,  # Disabilitato
         ema_rate="0.999",  # EMA leggermente più reattivo
-        log_interval=10,  # Frequenza dei log invariata
-        save_interval=5000,  # Salva il modello ogni 1000
+        log_interval=30,  # Frequenza dei log invariata
+        save_interval=2000,  # Salva il modello ogni 1000
         resume_checkpoint="",  # Default, nessun checkpoint
         use_fp16=True,  # Disabilitato per compatibilità GPU
         fp16_scale_growth=1e-3,  # Non usato con FP16 disabilitato
